@@ -576,6 +576,8 @@ func (oc *OpenstackClient) handleMachineError(machine *machinev1.Machine, err *a
 }
 
 func (oc *OpenstackClient) updateAnnotation(machine *machinev1.Machine, instanceID string, clusterInfraName string) error {
+	statusCopy := *machine.Status.DeepCopy()
+
 	if machine.ObjectMeta.Annotations == nil {
 		machine.ObjectMeta.Annotations = make(map[string]string)
 	}
@@ -623,6 +625,8 @@ func (oc *OpenstackClient) updateAnnotation(machine *machinev1.Machine, instance
 			return err
 		}
 	}
+
+	machine.Status = statusCopy
 
 	return oc.updateInstanceStatus(machine)
 }
